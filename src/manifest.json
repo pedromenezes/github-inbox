@@ -6,7 +6,7 @@
   
   "icons": { "128": "logo.png" },
 
-  "background_page": "background.html",
+  "background_page": "app.html",
 
   "browser_action": {
       "default_icon": "logo.png",
