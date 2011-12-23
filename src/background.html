@@ -40,6 +40,22 @@
           unreadNotifications: 0,
           unreadTotal: 0,
 
+          init: function(){
+            GitHubInbox.getUnreadTotal();
+            window.setInterval(
+              function(){ GitHubInbox.getUnreadTotal(); },
+              GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL
+            );
+
+            chrome.browserAction.onClicked.addListener(function() {
+              if (GitHubInbox.unreadMessages > 0) {
+                window.open(GitHubInbox.INBOX_URL);
+              } else {
+                window.open(GitHubInbox.NOTIFICATION_URL);
+              }
+            });
+          },
+
           getUnreadTotal: function() {
             var xhr = new XMLHttpRequest();
 
@@ -76,19 +92,7 @@
 
       })();
 
-      GitHubInbox.getUnreadTotal();
-      window.setInterval(
-        function(){ GitHubInbox.getUnreadTotal(); },
-        GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL
-      );
-
-      chrome.browserAction.onClicked.addListener(function() {
-        if (GitHubInbox.unreadMessages > 0) {
-          window.open(GitHubInbox.INBOX_URL);
-        } else {
-          window.open(GitHubInbox.NOTIFICATION_URL);
-        }
-      });
+      GitHubInbox.init();
     </script>
 
     <script type="text/javascript">
