@@ -59,8 +59,8 @@
                 chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
                 chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal > 0 ? GitHubInbox.unreadTotal : ''});
 
-                var messagesInflection = (GitHubInbox.unreadMessages <= 1 ? 'message' : 'messages');
-                var notificationsInflection = (GitHubInbox.unreadNotifications <= 1 ? 'notification' : 'notifications');
+                var messagesInflection = (GitHubInbox.unreadMessages == 1 ? 'message' : 'messages');
+                var notificationsInflection = (GitHubInbox.unreadNotifications == 1 ? 'notification' : 'notifications');
 
                 var title = GitHubInbox.unreadMessages + " unread " + messagesInflection;
                 title += " and " + GitHubInbox.unreadNotifications + " unread " + notificationsInflection;
