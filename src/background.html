@@ -5,76 +5,86 @@
 
   <body>
     <script>
-      var YELLOW = [255, 223, 1, 255];
-      var BLUE = [0, 128, 255, 255];
-      var INTERVAL_BETWEEN_GET_UNREAD_TOTAL = 90000; // 1.5 mins in ms
-      var NOTIFICATION_URL = 'https://github.com/inbox/notifications';
+      var GitHubInbox = {
+        YELLOW: [255, 223, 1, 255],
+        BLUE: [0, 128, 255, 255],
+        INTERVAL_BETWEEN_GET_UNREAD_TOTAL: 90000, // 1.5 mins in ms
+        NOTIFICATION_URL: 'https://github.com/inbox/notifications',
+        INBOX_URL: 'https://github.com/inbox',
 
-      function extractUnreadMessages(response){
-        var matches = response.match(/<span class="js-inbox-count">([^<]+)<\/span>/)
+        unreadMessages: 0,
+        unreadNotifications: 0,
+        unreadTotal: 0,
 
-        if ((matches != null) && (matches.length == 2)) {
-          var unreadMessages = parseInt(matches[1]);
-          return parseInt(unreadMessages);
-        }
+        extractUnreadMessages: function(response) {
+          var matches = response.match(/<span class="js-inbox-count">([^<]+)<\/span>/);
 
-        return 0;
-      }
+          if ((matches != null) && (matches.length == 2)) {
+            var unreadMessages = parseInt(matches[1]);
+            return parseInt(unreadMessages);
+          }
 
-      function extractUnreadNotifications(response){
-        var matches = response.match(/<span class="js-notification-count">([^<]+)<\/span>/);
+          return 0;
+        },
 
-        if ((matches != null) && (matches.length == 2)) {
-          var unreadNotifications = parseInt(matches[1]);
-          return unreadNotifications;
-        }
+        extractUnreadNotifications: function(response) {
+          var matches = response.match(/<span class="js-notification-count">([^<]+)<\/span>/);
 
-        return 0;
-      }
+          if ((matches != null) && (matches.length == 2)) {
+            var unreadNotifications = parseInt(matches[1]);
+            return unreadNotifications;
+          }
 
-      function getUnreadTotal(){
-        var xhr = new XMLHttpRequest();
-        var url = 'https://github.com/inbox';
+          return 0;
+        },
 
-        xhr.open("GET", url, true);
+        getUnreadTotal: function() {
+          var xhr = new XMLHttpRequest();
 
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState == 4) {
-            var response = xhr.response;
+          xhr.open("GET", GitHubInbox.INBOX_URL, true);
 
-            if (response.match(/<body class="logged_out/)) { // not logged in
-              chrome.browserAction.setBadgeBackgroundColor({color: YELLOW});
-              chrome.browserAction.setBadgeText({text: '!'});
-              chrome.browserAction.setTitle({title: "You should login on GitHub :)"});
-            } else { // logged in
-              var unreadMessages = extractUnreadMessages(response);
-              var unreadNotifications = extractUnreadNotifications(response);
-              var unreadTotal = (unreadMessages + unreadNotifications) + "";
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+              var response = xhr.response;
 
-              chrome.browserAction.setBadgeBackgroundColor({color: BLUE});
-              chrome.browserAction.setBadgeText({text: unreadTotal});
+              if (response.match(/<body class="logged_out/)) { // not logged in
+                chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.YELLOW});
+                chrome.browserAction.setBadgeText({text: '!'});
+                chrome.browserAction.setTitle({title: "You should login on GitHub :)"});
+              } else { // logged in
+                GitHubInbox.unreadMessages = GitHubInbox.extractUnreadMessages(response);
+                GitHubInbox.unreadNotifications = GitHubInbox.extractUnreadNotifications(response);
+                GitHubInbox.unreadTotal = (GitHubInbox.unreadMessages + GitHubInbox.unreadNotifications) + "";
 
-              var messagesInflection = (unreadMessages == 1 ? 'message' : 'messages');
-              var notificationsInflection = (unreadNotifications == 1 ? 'notification' : 'notifications');
+                chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
+                chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal > 0 ? GitHubInbox.unreadTotal : ''});
 
-              var title = unreadMessages + " unread " + messagesInflection;
-              title += " and " + unreadNotifications + " unread " + notificationsInflection;
-              chrome.browserAction.setTitle({title: title});
+                var messagesInflection = (GitHubInbox.unreadMessages <= 1 ? 'message' : 'messages');
+                var notificationsInflection = (GitHubInbox.unreadNotifications <= 1 ? 'notification' : 'notifications');
+
+                var title = GitHubInbox.unreadMessages + " unread " + messagesInflection;
+                title += " and " + GitHubInbox.unreadNotifications + " unread " + notificationsInflection;
+                chrome.browserAction.setTitle({title: title});
+              }
             }
           }
+          xhr.send(null);
         }
-        xhr.send(null);
-      }
+      };
 
-      getUnreadTotal();
-      window.setInterval(function(){ getUnreadTotal(); }, INTERVAL_BETWEEN_GET_UNREAD_TOTAL);
+      GitHubInbox.getUnreadTotal();
+      window.setInterval(function(){ GitHubInbox.getUnreadTotal(); },
+          GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL);
 
       chrome.browserAction.onClicked.addListener(function() {
-        window.open(NOTIFICATION_URL);
-        _gaq.push(['_trackEvent', "BrowserIcon", "Click"]);
+        if (GitHubInbox.unreadMessages > 0) {
+          window.open(GitHubInbox.INBOX_URL);
+        } else {
+          window.open(GitHubInbox.NOTIFICATION_URL);
+        }
       });
     </script>
-    
+
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1639559-30']);
