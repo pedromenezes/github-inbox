@@ -2,7 +2,7 @@
   "name": "GitHub Inbox",
   "description" : "Shows a tooltip with your unread messages and notifications from GitHub",
 
-  "version": "0.18",
+  "version": "0.19.1",
   
   "icons": { "128": "logo.png" },
 
