@@ -73,8 +73,10 @@
       };
 
       GitHubInbox.getUnreadTotal();
-      window.setInterval(function(){ GitHubInbox.getUnreadTotal(); },
-          GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL);
+      window.setInterval(
+        function(){ GitHubInbox.getUnreadTotal(); },
+        GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL
+      );
 
       chrome.browserAction.onClicked.addListener(function() {
         if (GitHubInbox.unreadMessages > 0) {
