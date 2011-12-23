@@ -48,7 +48,7 @@
             );
 
             chrome.browserAction.onClicked.addListener(function() {
-              if (GitHubInbox.unreadMessages > 0) {
+              if ((GitHubInbox.unreadMessages > 0) || (GitHubInbox.unreadNotifications == 0)) {
                 window.open(GitHubInbox.INBOX_URL);
               } else {
                 window.open(GitHubInbox.NOTIFICATION_URL);
