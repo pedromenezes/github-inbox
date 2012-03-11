@@ -1,11 +1,18 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script type="text/javascript" src="fancy-settings/source/lib/store.js"></script>
   </head>
 
   <body>
     <script>
       var GitHubInbox = (function(){
+
+        var settings = new Store("settings", {
+          "badge-counter": true,
+          "destination": "private-messages",
+          "inverval": 90000
+        });
 
         function extractUnreadMessages(response) {
           var matches = response.match(/<span class="js-inbox-count">([^<]+)<\/span>/);
@@ -32,6 +39,7 @@
         return {
           YELLOW: [255, 223, 1, 255],
           BLUE: [0, 128, 255, 255],
+          TRANSPARENT: [255, 255, 255, 0],
           INTERVAL_BETWEEN_GET_UNREAD_TOTAL: 90000, // 1.5 mins in ms
           NOTIFICATION_URL: 'https://github.com/inbox/notifications',
           INBOX_URL: 'https://github.com/inbox',
@@ -42,13 +50,14 @@
 
           init: function(){
             GitHubInbox.getUnreadTotal();
+            GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL = settings.get("interval");
             window.setInterval(
               function(){ GitHubInbox.getUnreadTotal(); },
               GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL
             );
 
             chrome.browserAction.onClicked.addListener(function() {
-              if ((GitHubInbox.unreadMessages > 0) || (GitHubInbox.unreadNotifications == 0)) {
+              if (settings.get("destination") === "private-messages") {
                 window.open(GitHubInbox.INBOX_URL);
               } else {
                 window.open(GitHubInbox.NOTIFICATION_URL);
@@ -74,8 +83,18 @@
                   GitHubInbox.unreadNotifications = extractUnreadNotifications(response);
                   GitHubInbox.unreadTotal = (GitHubInbox.unreadMessages + GitHubInbox.unreadNotifications) + "";
 
-                  chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
-                  chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
+                  if (settings.get("badge-counter") === true) {
+                    chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
+                    chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
+                  } else {
+                    if (parseInt(GitHubInbox.unreadTotal, 10) > 0) {
+                      chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
+                      chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
+                    } else {
+                      chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.TRANSPARENT});
+                      chrome.browserAction.setBadgeText({text: ''});
+                    }
+                  }
 
                   var messagesInflection = (GitHubInbox.unreadMessages == 1 ? 'message' : 'messages');
                   var notificationsInflection = (GitHubInbox.unreadNotifications == 1 ? 'notification' : 'notifications');
