@@ -19,16 +19,16 @@ this.i18n = {
         "en": "General",
         "de": "Allgemein"
     },
+    "badge":{
+        "en": "Badge",
+        "de": "TODO",
+    },
     "show-badge-even-with-zero-messages": {
         "en": "Show badge when there are no messages",
         "de": "Emblem trotz null ungelesener Benachrichtigungen und privaten Nachrichten anzeigen"
     },
-    "destination": {
-        "en": "Destination",
-        "de": "Zeil"
-    },
     "destination-desc": {
-        "en": "Where do you want to go when there are both unread notifications and private messages?",
+        "en": "Where to go when there are both unread notifications and private messages",
         "de": "Wohin wollen Sie gehen wenn sowohl ungelesene Benachrichtigungen und private Nachrichten existieren?"
     },
     "private-messages": {

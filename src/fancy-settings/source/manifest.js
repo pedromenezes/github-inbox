@@ -1,15 +1,7 @@
-// SAMPLE
 this.manifest = {
     "name": "GitHub Inbox",
     "icon": "../../icon.png",
     "settings": [
-        {
-            "tab": i18n.get("behavior"),
-            "group": i18n.get("general"),
-            "name": "show-badge-even-with-zero-messages",
-            "type": "checkbox",
-            "label": i18n.get("show-badge-even-with-zero-messages")
-        },
         {
             "tab": i18n.get("behavior"),
             "group": i18n.get("general"),
@@ -26,7 +18,7 @@ this.manifest = {
         },
         {
             "tab": i18n.get("behavior"),
-            "group": i18n.get("destination"),
+            "group": i18n.get("badge"),
             "name": "destination",
             "type": "radioButtons",
             "label": i18n.get("destination-desc"),
@@ -34,6 +26,13 @@ this.manifest = {
                 ["private-messages", i18n.get("private-messages")],
                 ["notifications", i18n.get("notifications")]
             ]
+        },
+        {
+            "tab": i18n.get("behavior"),
+            "group": i18n.get("badge"),
+            "name": "show-badge-even-with-zero-messages",
+            "type": "checkbox",
+            "label": i18n.get("show-badge-even-with-zero-messages")
         }
     ],
     "alignment": []
