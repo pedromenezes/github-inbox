@@ -6,9 +6,9 @@ this.manifest = {
         {
             "tab": i18n.get("behavior"),
             "group": i18n.get("general"),
-            "name": "badge-counter",
+            "name": "show-badge-even-with-zero-messages",
             "type": "checkbox",
-            "label": i18n.get("badge-counter")
+            "label": i18n.get("show-badge-even-with-zero-messages")
         },
         {
             "tab": i18n.get("behavior"),
