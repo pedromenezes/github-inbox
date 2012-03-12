@@ -46,9 +46,5 @@ this.i18n = {
     "seconds": {
         "en": "seconds",
         "de": "Sekunden"
-    },
-    "google-analytics-desc": {
-        "en": "I agree to send anonymous statistics to Google Analytics.",
-        "de": "Ich stimme zu anonyme Statistiken an Google Analytics zu übermitteln."
     }
 };
