@@ -47,15 +47,11 @@
           unreadTotal: 0,
 
           init: function(){
-            GitHubInbox.getUnreadTotal();
-            GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL = settings.get("interval");
-            window.setInterval(
-              function(){ GitHubInbox.getUnreadTotal(); },
-              GitHubInbox.INTERVAL_BETWEEN_GET_UNREAD_TOTAL
-            );
+            GitHubInbox.checkMessages();
+            GitHubInbox.checkMessagesAfterTimeout();
 
             chrome.browserAction.onClicked.addListener(function() {
-              if (settings.get("destination") === "private-messages") {
+              if ((GitHubInbox.unreadMessages) && ((!GitHubInbox.unreadNotifications) || (settings.get("destination") === "private-messages"))){
                 window.open(GitHubInbox.INBOX_URL);
               } else {
                 window.open(GitHubInbox.NOTIFICATION_URL);
@@ -63,44 +59,57 @@
             });
           },
 
-          getUnreadTotal: function() {
-            var xhr = new XMLHttpRequest();
+          checkMessagesAfterTimeout: function(){
+            GitHubInbox.INTERVAL_BETWEEN_CHECK_MESSAGES = settings.get("interval");
 
+            window.setTimeout(
+              function(){
+                GitHubInbox.checkMessages();
+                GitHubInbox.checkMessagesAfterTimeout();
+              },
+              GitHubInbox.INTERVAL_BETWEEN_CHECK_MESSAGES
+            );
+          },
+
+          checkMessages: function() {
+            var xhr = new XMLHttpRequest();
             xhr.open("GET", GitHubInbox.INBOX_URL, true);
 
             xhr.onreadystatechange = function() {
               if (xhr.readyState == 4) {
                 var response = xhr.response;
 
-                if (response.match(/<body class="logged_out/)) { // not logged in
+                // not logged in
+                if (response.match(/<body class="logged_out/)) {
                   chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.YELLOW});
                   chrome.browserAction.setBadgeText({text: '!'});
                   chrome.browserAction.setTitle({title: "You should login on GitHub :)"});
-                } else { // logged in
-                  GitHubInbox.unreadMessages = extractUnreadMessages(response);
-                  GitHubInbox.unreadNotifications = extractUnreadNotifications(response);
-                  GitHubInbox.unreadTotal = (GitHubInbox.unreadMessages + GitHubInbox.unreadNotifications) + "";
+                  return;
+                }
 
-                  if (settings.get("badge-counter") === true) {
-                    chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
+                // logged in
+                GitHubInbox.unreadMessages = extractUnreadMessages(response);
+                GitHubInbox.unreadNotifications = extractUnreadNotifications(response);
+                GitHubInbox.unreadTotal = (GitHubInbox.unreadMessages + GitHubInbox.unreadNotifications) + "";
+
+                chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
+
+                if (settings.get("show-badge-even-with-zero-messages") === true) {
+                  chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
+                } else {
+                  if (GitHubInbox.unreadTotal) {
                     chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
                   } else {
-                    if (parseInt(GitHubInbox.unreadTotal, 10) > 0) {
-                      chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
-                      chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
-                    } else {
-                      chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.TRANSPARENT});
-                      chrome.browserAction.setBadgeText({text: ''});
-                    }
+                    chrome.browserAction.setBadgeText({text: ''});
                   }
-
-                  var messagesInflection = (GitHubInbox.unreadMessages == 1 ? 'message' : 'messages');
-                  var notificationsInflection = (GitHubInbox.unreadNotifications == 1 ? 'notification' : 'notifications');
-
-                  var title = GitHubInbox.unreadMessages + " unread " + messagesInflection;
-                  title += " and " + GitHubInbox.unreadNotifications + " unread " + notificationsInflection;
-                  chrome.browserAction.setTitle({title: title});
                 }
+
+                var messagesInflection = (GitHubInbox.unreadMessages == 1 ? 'message' : 'messages');
+                var notificationsInflection = (GitHubInbox.unreadNotifications == 1 ? 'notification' : 'notifications');
+
+                var title = GitHubInbox.unreadMessages + " unread " + messagesInflection;
+                title += " and " + GitHubInbox.unreadNotifications + " unread " + notificationsInflection;
+                chrome.browserAction.setTitle({title: title});
               }
             }
             xhr.send(null);
