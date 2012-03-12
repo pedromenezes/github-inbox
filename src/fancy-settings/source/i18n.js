@@ -21,7 +21,7 @@ this.i18n = {
     },
     "badge":{
         "en": "Badge",
-        "de": "TODO",
+        "de": "Emblem",
     },
     "show-badge-even-with-zero-messages": {
         "en": "Show badge when there are no messages",
@@ -45,6 +45,6 @@ this.i18n = {
     },
     "seconds": {
         "en": "seconds",
-        "de": "sekunden"
+        "de": "Sekunden"
     }
 };
