@@ -19,16 +19,16 @@ this.i18n = {
         "en": "General",
         "de": "Allgemein"
     },
-    "badge-counter": {
-        "en": "Show badge even on zero unread notifications and private messages?",
-        "de": "Emblem trotz null ungelesener Benachrichtigungen und privaten Nachrichten anzeigen?"
+    "show-badge-even-with-zero-messages": {
+        "en": "Show badge when there are no messages",
+        "de": "Emblem trotz null ungelesener Benachrichtigungen und privaten Nachrichten anzeigen"
     },
     "destination": {
         "en": "Destination",
         "de": "Zeil"
     },
     "destination-desc": {
-        "en": "Where do you want to go when there are both; unread notifications and private messages?",
+        "en": "Where do you want to go when there are both unread notifications and private messages?",
         "de": "Wohin wollen Sie gehen wenn sowohl ungelesene Benachrichtigungen und private Nachrichten existieren?"
     },
     "private-messages": {
@@ -40,11 +40,11 @@ this.i18n = {
         "de": "Benachrichtigungen"
     },
     "interval": {
-        "en": "Interval between notification and private message checks:",
+        "en": "Interval between message checking:",
         "de": "Intervall zwischen Überprüfungen auf neue Benachrichtigungen und private Nachrichten:"
     },
     "seconds": {
         "en": "seconds",
-        "de": "Sekunden"
+        "de": "sekunden"
     }
 };
