@@ -94,10 +94,10 @@
 
                 chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
 
-                if (settings.get("show-badge-even-with-zero-messages") === true) {
+                if (settings.get("show-badge-even-with-zero-messages") == true) {
                   chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
                 } else {
-                  if (GitHubInbox.unreadTotal) {
+                  if (parseInt(GitHubInbox.unreadTotal)) {
                     chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
                   } else {
                     chrome.browserAction.setBadgeText({text: ''});
