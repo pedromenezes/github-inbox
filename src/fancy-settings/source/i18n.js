@@ -27,18 +27,6 @@ this.i18n = {
         "en": "Show badge when there are no messages",
         "de": "Emblem trotz null ungelesener Benachrichtigungen und privaten Nachrichten anzeigen"
     },
-    "destination-desc": {
-        "en": "Where to go when there are both unread notifications and private messages",
-        "de": "Wohin wollen Sie gehen wenn sowohl ungelesene Benachrichtigungen und private Nachrichten existieren?"
-    },
-    "private-messages": {
-        "en": "Private Messages",
-        "de": "Private Nachrichten"
-    },
-    "notifications": {
-        "en": "Notifications",
-        "de": "Benachrichtigungen"
-    },
     "interval": {
         "en": "Interval between message checking:",
         "de": "Intervall zwischen Überprüfungen auf neue Benachrichtigungen und private Nachrichten:"

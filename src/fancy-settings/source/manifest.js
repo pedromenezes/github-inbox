@@ -1,5 +1,5 @@
 this.manifest = {
-    "name": "GitHub Inbox",
+    "name": "GitHub Notifications",
     "icon": "../../icon.png",
     "settings": [
         {
@@ -15,17 +15,6 @@ this.manifest = {
             "displayModifier": function (value) {
                 return (value / 1000).floor() + " " + i18n.get("seconds");
             }
-        },
-        {
-            "tab": i18n.get("behavior"),
-            "group": i18n.get("badge"),
-            "name": "destination",
-            "type": "radioButtons",
-            "label": i18n.get("destination-desc"),
-            "options": [
-                ["private-messages", i18n.get("private-messages")],
-                ["notifications", i18n.get("notifications")]
-            ]
         },
         {
             "tab": i18n.get("behavior"),

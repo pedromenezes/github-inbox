@@ -6,27 +6,15 @@
 
   <body>
     <script>
-      var GitHubInbox = (function(){
+      var GitHubNotifications = (function(){
 
         var settings = new Store("settings", {
           "show-badge-even-with-zero-messages": true,
-          "destination": "private-messages",
           "interval": 90000
         });
 
-        function extractUnreadMessages(response) {
-          var matches = response.match(/<span class="js-inbox-count">([^<]+)<\/span>/);
-
-          if ((matches != null) && (matches.length == 2)) {
-            var unreadMessages = parseInt(matches[1]);
-            return parseInt(unreadMessages);
-          }
-
-          return 0;
-        }
-
         function extractUnreadNotifications(response) {
-          var matches = response.match(/<span class="js-notification-count">([^<]+)<\/span>/);
+          var matches = response.match(/<span class="unread_count">([^<]+)<\/span>/);
 
           if ((matches != null) && (matches.length == 2)) {
             var unreadNotifications = parseInt(matches[1]);
@@ -40,40 +28,33 @@
           YELLOW: [255, 223, 1, 255],
           BLUE: [0, 128, 255, 255],
           NOTIFICATION_URL: 'https://github.com/inbox/notifications',
-          INBOX_URL: 'https://github.com/inbox',
 
-          unreadMessages: 0,
           unreadNotifications: 0,
-          unreadTotal: 0,
 
           init: function(){
-            GitHubInbox.checkMessages();
-            GitHubInbox.checkMessagesAfterTimeout();
+            GitHubNotifications.checkNotifications();
+            GitHubNotifications.checkNotificationsAfterTimeout();
 
             chrome.browserAction.onClicked.addListener(function() {
-              if ((GitHubInbox.unreadMessages) && ((!GitHubInbox.unreadNotifications) || (settings.get("destination") === "private-messages"))){
-                window.open(GitHubInbox.INBOX_URL);
-              } else {
-                window.open(GitHubInbox.NOTIFICATION_URL);
-              }
+              window.open(GitHubNotifications.NOTIFICATION_URL);
             });
           },
 
-          checkMessagesAfterTimeout: function(){
-            GitHubInbox.INTERVAL_BETWEEN_CHECK_MESSAGES = settings.get("interval");
+          checkNotificationsAfterTimeout: function(){
+            GitHubNotifications.INTERVAL_BETWEEN_CHECK_NOTIFICATIONS = settings.get("interval");
 
             window.setTimeout(
               function(){
-                GitHubInbox.checkMessages();
-                GitHubInbox.checkMessagesAfterTimeout();
+                GitHubNotifications.checkNotifications();
+                GitHubNotifications.checkNotificationsAfterTimeout();
               },
-              GitHubInbox.INTERVAL_BETWEEN_CHECK_MESSAGES
+              GitHubNotifications.INTERVAL_BETWEEN_CHECK_NOTIFICATIONS
             );
           },
 
-          checkMessages: function() {
+          checkNotifications: function() {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", GitHubInbox.INBOX_URL, true);
+            xhr.open("GET", GitHubNotifications.NOTIFICATION_URL, true);
 
             xhr.onreadystatechange = function() {
               if (xhr.readyState == 4) {
@@ -81,34 +62,31 @@
 
                 // not logged in
                 if (response.match(/<body class="logged_out/)) {
-                  chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.YELLOW});
+                  chrome.browserAction.setBadgeBackgroundColor({color: GitHubNotifications.YELLOW});
                   chrome.browserAction.setBadgeText({text: '!'});
                   chrome.browserAction.setTitle({title: "You should login on GitHub :)"});
                   return;
                 }
 
                 // logged in
-                GitHubInbox.unreadMessages = extractUnreadMessages(response);
-                GitHubInbox.unreadNotifications = extractUnreadNotifications(response);
-                GitHubInbox.unreadTotal = (GitHubInbox.unreadMessages + GitHubInbox.unreadNotifications) + "";
+                GitHubNotifications.unreadNotifications = extractUnreadNotifications(response) + "";
 
-                chrome.browserAction.setBadgeBackgroundColor({color: GitHubInbox.BLUE});
+                chrome.browserAction.setBadgeBackgroundColor({color: GitHubNotifications.BLUE});
 
                 if (settings.get("show-badge-even-with-zero-messages") == true) {
-                  chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
+                  chrome.browserAction.setBadgeText({text: GitHubNotifications.unreadNotifications});
                 } else {
-                  if (parseInt(GitHubInbox.unreadTotal)) {
-                    chrome.browserAction.setBadgeText({text: GitHubInbox.unreadTotal});
+                  if (parseInt(GitHubNotifications.unreadNotifications)) {
+                    chrome.browserAction.setBadgeText({text: GitHubNotifications.unreadNotifications});
                   } else {
                     chrome.browserAction.setBadgeText({text: ''});
                   }
                 }
 
-                var messagesInflection = (GitHubInbox.unreadMessages == 1 ? 'message' : 'messages');
-                var notificationsInflection = (GitHubInbox.unreadNotifications == 1 ? 'notification' : 'notifications');
+                // TODO: int?
+                var notificationsInflection = (GitHubNotifications.unreadNotifications == 1 ? 'notification' : 'notifications');
 
-                var title = GitHubInbox.unreadMessages + " unread " + messagesInflection;
-                title += " and " + GitHubInbox.unreadNotifications + " unread " + notificationsInflection;
+                var title = GitHubNotifications.unreadNotifications + " unread " + notificationsInflection;
                 chrome.browserAction.setTitle({title: title});
               }
             }
@@ -118,7 +96,7 @@
 
       })();
 
-      GitHubInbox.init();
+      GitHubNotifications.init();
     </script>
   </body>
 </html>

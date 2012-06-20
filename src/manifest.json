@@ -1,8 +1,8 @@
 {
-  "name": "GitHub Inbox",
-  "description" : "Shows a tooltip with your unread messages and notifications from GitHub",
+  "name": "GitHub Notifications",
+  "description" : "Shows a tooltip with your unread notifications from GitHub",
 
-  "version": "0.20.0",
+  "version": "0.20.1",
   
   "icons": { "128": "logo.png" },
 
@@ -10,7 +10,7 @@
 
   "browser_action": {
       "default_icon": "logo.png",
-      "default_title": "GitHub Inbox"
+      "default_title": "GitHub Notifications"
   },
 
   "permissions": [
