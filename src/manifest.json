@@ -2,13 +2,11 @@
   "name": "GitHub Notifications",
   "description" : "Shows a tooltip with your unread notifications from GitHub",
 
-  "manifest_version": 2,
-
-  "version": "0.20.2",
+  "version": "0.20.1",
   
   "icons": { "128": "logo.png" },
 
-  "background": "app.html",
+  "background_page": "app.html",
 
   "browser_action": {
       "default_icon": "logo.png",
