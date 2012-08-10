@@ -1,21 +1,14 @@
 {
   "name": "GitHub Notifications",
   "description" : "Shows a tooltip with your unread notifications from GitHub",
-
-  "version": "0.20.1",
-  
-  "icons": { "128": "logo.png" },
-
-  "background_page": "app.html",
-
+  "version": "0.20.21",
+  "manifest_version": 2,
+  "icons": {"128": "logo.png"},
+  "background": {"page": "app.html"},
   "browser_action": {
       "default_icon": "logo.png",
       "default_title": "GitHub Notifications"
   },
-
-  "permissions": [
-    "https://github.com/"
-  ],
-
+  "permissions": ["https://github.com/"],
   "options_page": "fancy-settings/source/index.html"
 }
